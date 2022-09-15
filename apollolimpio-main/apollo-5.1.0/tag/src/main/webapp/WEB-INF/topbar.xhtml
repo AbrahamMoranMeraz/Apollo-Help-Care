@@ -1,0 +1,35 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pa="http://primefaces.org/apollo">
+
+    <div class="topbar clearfix">
+        <h:link id="logolink" outcome="/dashboard" styleClass="topbar-logo">
+            <p:graphicImage styleClass="logo" library="apollo-layout" name="images/#{guestPreferences.lightLogo ? 'apollo_logo.png' : 'apollo-logo-dark.png'}" />
+        </h:link>
+        <a id="menu-button" href="#">
+            <i class="pi pi-align-left"/>
+        </a>
+
+        <a href="#" class="profile">
+            <span class="username">#{loginCtrl.selectedUsuario.nombre}</span>
+            <p:graphicImage name="images/avatar.png" library="apollo-layout" />
+        </a>
+
+        <ul class="topbar-menu fadeInDown">
+            <li role="menuitem">
+                <a href="editEntidadMedica.xhtml">
+                    <i class="pi pi-user"/>
+                    <span>Profile</span>
+                </a>
+            </li>
+            <li role="menuitem">
+                <p:commandButton value="Logout" icon="pi pi-sign-out" action="#{loginCtrl.logout()}"/>
+            </li>
+        </ul>
+    </div>
+
+</ui:composition>

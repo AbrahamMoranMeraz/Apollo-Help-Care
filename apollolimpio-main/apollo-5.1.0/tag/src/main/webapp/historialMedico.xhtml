@@ -1,0 +1,132 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Medical History</ui:define>
+
+    <ui:define name="viewname">
+        <li>Pages</li> 
+        <li>/</li>
+        <li><p:link outcome="/historialMedico">Medical History</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="messages" showDetail="true" />
+
+            <p:dataTable id="dt-products" widgetVar="dtProducts" var="product" value="#{historialMedicoCtrl.pacientes}"
+                         reflow="true" styleClass="products-table" 
+                         rowKey="#{product.idpaciente}" paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom">
+                <f:facet name="header">
+                    <div class="products-table-header">
+                        <span style="font-weight: bold">MEDICAL HISTORY</span> <span
+                            class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i> <p:inputText
+                                id="globalFilter" onkeyup="PF('dtProducts').filter()" placeholder="Search" />
+                        </span>
+
+                    </div>
+                </f:facet>
+
+                <p:column headerText="Id" sortBy="#{product.idpaciente}" filterBy="#{product.idpaciente}">
+                    <h:outputText value="#{product.idpaciente}" />
+                </p:column>
+                <p:column headerText="Name" sortBy="#{product.nombre}" filterBy="#{product.nombre}">
+                    <h:outputText value="#{product.nombre}" />
+                </p:column>
+                <p:column headerText="Location" sortBy="#{product.ubicacion}" filterBy="#{product.ubicacion}">
+                    <h:outputText value="#{product.ubicacion}" />
+                </p:column>
+                <p:column headerText="Phone" sortBy="#{product.telefono}" filterBy="#{product.telefono}">
+                    <h:outputText value="#{product.telefono}" />
+                </p:column>
+                <p:column headerText="Image" exportable="false">
+                    <p:graphicImage name="images/avatar1.png" library="apollo-layout" styleClass="product-image" />
+                </p:column>
+
+                <p:column exportable="false">
+                    <p:commandButton value="Add" update=":dialogs:manage-contacts"
+                                     oncomplete="PF('manageContactDialog').show()" actionListener="#{historialMedicoCtrl.onPaciente(product)}"
+                                     styleClass="edit-button rounded-button " process="@this">
+                        <f:setPropertyActionListener value="#{product}" target="#{historialMedicoCtrl.selectedPaciente}" />
+                    </p:commandButton>
+
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+
+        <h:form id="dialogs">
+
+            <p:dialog id="dialog" header="PDF" widgetVar="pdfDialog" height="500" width="1000" showEffect="fade" modal="true">
+                <p:media id="media" value="#{pv.content}" cache="false" width="100%" height="450px" player="pdf" >
+                    Tu navegador no puede mostrar el pdf.
+                </p:media>
+            </p:dialog>
+
+            <p:dialog header="Medical history" showEffect="fade" modal="true" widgetVar="manageContactDialog" width="400px"  height="400px"
+                      responsive="true">
+                <p:outputPanel id="manage-contacts" class="ui-fluid">
+                    <p:panelGrid columns="1" rendered="#{not empty historialMedicoCtrl.selectedPaciente}">
+                        <p:dataTable var="product" value="#{historialMedicoCtrl.historialmedico}" paginator="true" rows="3">
+
+                            <p:column headerText="Name">
+                                <h:outputText value="#{product.nombre}" />
+                            </p:column>
+
+                            <p:column headerText="Details">
+                                <h:outputText value="#{product.detalles}" />
+                            </p:column>
+
+                            <p:column headerText="Treatment">
+                                <h:outputText value="#{product.tratamiento}" />
+                            </p:column>
+
+                            <p:column headerText="File">
+                                <p:commandButton icon="pi pi-search" actionListener="#{historialMedicoCtrl.preview(product)}"
+                                                 oncomplete="PF('pdfDialog').show()" process="@this"
+                                                 update=":dialogs:dialog" disabled="#{empty product.archivo}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <p:divider align="left">
+                            <span class="ui-tag">New </span>
+                        </p:divider>
+                        <p:outputPanel style="width:200px;">
+                            <div class="field">
+                                <p:outputLabel for="nameContact">Name</p:outputLabel>
+                                <p:inputText id="nameContact" value="#{historialMedicoCtrl.selectedHistorial.nombre}" required="true" />
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="locationContact">Details</p:outputLabel>
+                                <p:inputTextarea id="locationContact" value="#{historialMedicoCtrl.selectedHistorial.detalles}" required="true"/>
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="treatment">Treatment</p:outputLabel>
+                                <p:inputTextarea id="treatment" value="#{historialMedicoCtrl.selectedHistorial.tratamiento}" required="true"/>
+                            </div>
+                            <div class="field">
+                                <h:outputText value="Archivo"/>
+                                <p:fileUpload value="#{historialMedicoCtrl.file}" mode="simple" skinSimple="true" auto="true" 
+                                              process="@this" listener="#{historialMedicoCtrl.upload}" accept=".pdf">
+                                </p:fileUpload>
+                            </div>
+                        </p:outputPanel>
+                    </p:panelGrid>
+
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check" actionListener="#{historialMedicoCtrl.save}"
+                                     update="manage-contacts" process="manage-contacts @this" />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageContactDialog').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,236 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Pacients</ui:define>
+
+    <ui:define name="viewname">
+        <li>Pages</li> 
+        <li>/</li>
+        <li><p:link outcome="/paciente">Pacients</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="card crud-demo">
+            <h:form id="form">
+                <p:growl id="messages" showDetail="true" />
+
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton value="New" icon="pi pi-plus" actionListener="#{pacienteCtrl.openNew}" styleClass="ui-button-success"
+                                         update=":dialogs:manage-product-content" oncomplete="PF('manageProductDialog').show()"
+                                         style="margin-right: .5rem">
+                            <p:resetInput target=":dialogs:manage-product-content" />
+                        </p:commandButton>
+                        <p:commandButton id="delete-products-button" value="#{pacienteCtrl.deleteButtonMessage}"
+                                         icon="pi pi-trash" actionListener="#{pacienteCtrl.deleteSelectedProducts}"
+                                         styleClass="ui-button-info" disabled="#{!pacienteCtrl.hasSelectedProducts()}" update=":form">
+                            <p:confirm header="Confirmation" message="Delete the selected pacients?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:toolbarGroup>
+
+                </p:toolbar>
+
+                <p:dataTable id="dt-products" widgetVar="dtProducts" var="product" value="#{pacienteCtrl.pacientes}"
+                             reflow="true" styleClass="products-table" selection="#{pacienteCtrl.selectedPacientes}"
+                             rowKey="#{product.idpaciente}" paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom">
+                    <f:facet name="header">
+                        <div class="products-table-header">
+                            <span style="font-weight: bold">PACIENTS</span> <span
+                                class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i> <p:inputText
+                                    id="globalFilter" onkeyup="PF('dtProducts').filter()" placeholder="Search" />
+                            </span>
+
+                        </div>
+                    </f:facet>
+
+                    <p:ajax event="rowSelect" update=":form:delete-products-button" />
+                    <p:ajax event="rowUnselect" update=":form:delete-products-button" />
+                    <p:ajax event="rowSelectCheckbox" update=":form:delete-products-button" />
+                    <p:ajax event="rowUnselectCheckbox" update=":form:delete-products-button" />
+                    <p:ajax event="toggleSelect" update=":form:delete-products-button" />
+
+                    <p:column selectionMode="multiple" exportable="false"></p:column>
+
+                    <p:column headerText="Id" sortBy="#{product.idpaciente}" filterBy="#{product.idpaciente}">
+                        <h:outputText value="#{product.idpaciente}" />
+                    </p:column>
+                    <p:column headerText="Name" sortBy="#{product.nombre}" filterBy="#{product.nombre}">
+                        <h:outputText value="#{product.nombre}" />
+                    </p:column>
+                    <p:column headerText="Location" sortBy="#{product.ubicacion}" filterBy="#{product.ubicacion}">
+                        <h:outputText value="#{product.ubicacion}" />
+                    </p:column>
+                    <p:column headerText="Phone" sortBy="#{product.telefono}" filterBy="#{product.telefono}">
+                        <h:outputText value="#{product.telefono}" />
+                    </p:column>
+                    <p:column headerText="Image" exportable="false">
+                        <p:graphicImage name="images/avatar1.png" library="apollo-layout" styleClass="product-image" />
+                    </p:column>
+
+                    <p:column exportable="false">
+                        <p:commandButton value="Add contact" update=":dialogs:manage-contacts"
+                                         oncomplete="PF('manageContactDialog').show()" actionListener="#{pacienteCtrl.onContacto(product)}"
+                                         styleClass="edit-button rounded-button " process="@this">
+                            <f:setPropertyActionListener value="#{product}" target="#{pacienteCtrl.selectedPaciente}" />
+                        </p:commandButton>
+                        <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-product-content"
+                                         oncomplete="PF('manageProductDialog').show()"
+                                         styleClass="edit-button rounded-button " process="@this">
+                            <f:setPropertyActionListener value="#{product}" target="#{pacienteCtrl.selectedPaciente}" />
+                            <p:resetInput target=":dialogs:manage-product-content" />
+                        </p:commandButton>
+                        <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                         oncomplete="PF('deleteProductDialog').show()">
+                            <f:setPropertyActionListener value="#{product}" target="#{pacienteCtrl.selectedPaciente}" />
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="dialogs">
+                <p:dialog header="Pacient Details" showEffect="fade" modal="true" widgetVar="manageProductDialog" width="400px" height="400px"
+                          responsive="true">
+                    <p:outputPanel id="manage-product-content" class="ui-fluid">
+                        <p:divider align="left">
+                            <div class="inline-flex align-items-center">
+                                <i class="pi pi-user mr-2"/>
+                                <b>Pacient</b>
+                            </div>
+                        </p:divider>
+                        <h:outputText id="panelImage" value="Pacient photo " rendered="#{not empty pacienteCtrl.selectedPaciente.foto}" />
+                        <p:graphicImage id="image" value="#{pacienteCtrl.image}" style="width: 200px; height: 200px;" rendered="#{not empty pacienteCtrl.selectedPaciente.foto}"/>
+                        <h:outputText value="Upload a photo of the user"/>
+                        <p:fileUpload listener="#{pacienteCtrl.uploadFile}" mode="advanced" dragDropSupport="false" fileLimit="1"
+                                      sizeLimit="600000" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf|JPG)$/" update=":dialogs:panelImage :dialogs:image" />
+                        <p:outputPanel>
+                            <div class="field">
+                                <p:outputLabel for="name">Name</p:outputLabel>
+                                <p:inputText id="name" value="#{pacienteCtrl.selectedPaciente.nombre}" required="true" />
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="location">Location</p:outputLabel>
+                                <p:inputTextarea id="location" value="#{pacienteCtrl.selectedPaciente.ubicacion}" required="true"/>
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="description">Phone</p:outputLabel>
+                                <p:inputText id="description" value="#{pacienteCtrl.selectedPaciente.telefono}" required="true"/>
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="tipoSangre">Blood type</p:outputLabel>
+                                <p:inputText id="tipoSangre" value="#{pacienteCtrl.selectedPaciente.tiposangre}" required="true"/>
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="alergias">Allergies</p:outputLabel>
+                                <p:inputText id="alergias" value="#{pacienteCtrl.selectedPaciente.alergias}" required="true"/>
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="altura">Height</p:outputLabel>
+                                <p:inputText id="altura" value="#{pacienteCtrl.selectedPaciente.tiposangre}" required="true"/>
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="peso">Weight</p:outputLabel>
+                                <p:inputText id="peso" value="#{pacienteCtrl.selectedPaciente.alergias}" required="true"/>
+                            </div>
+                        </p:outputPanel>
+                        <p:divider align="left">
+                            <div class="inline-flex align-items-center">
+                                <i class="pi pi-user mr-2"/>
+                                <b>User</b>
+                            </div>
+                        </p:divider>
+                        <p:outputPanel rendered="#{not empty pacienteCtrl.selectedPaciente}">
+                            <div class="field">
+                                <p:outputLabel for="email">Email</p:outputLabel>
+                                <p:inputText id="email" value="#{pacienteCtrl.selectedPaciente.usuarioIdusuario.correo}" required="true" />
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="password">Password</p:outputLabel>
+                                <p:inputTextarea id="password" value="#{pacienteCtrl.selectedPaciente.usuarioIdusuario.contrasena}" required="true" />
+                            </div>
+                        </p:outputPanel>
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Save" icon="pi pi-check" actionListener="#{pacienteCtrl.saveProduct}"
+                                         update="manage-product-content" process="manage-product-content @this" />
+                        <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageProductDialog').hide()"
+                                         class="ui-button-secondary" type="button" />
+                    </f:facet>
+                </p:dialog>
+
+                <p:dialog header="Contacts" showEffect="fade" modal="true" widgetVar="manageContactDialog" width="400px" height="400px"
+                          responsive="true">
+                    <p:outputPanel id="manage-contacts" class="ui-fluid">
+                        <p:panelGrid columns="1" rendered="#{not empty pacienteCtrl.selectedPaciente}">
+                            <p:dataTable var="product" value="#{pacienteCtrl.contactos}" paginator="true" rows="3">
+                                <p:column headerText="Name">
+                                    <h:outputText value="#{product.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Phone">
+                                    <h:outputText value="#{product.telefono}" />
+                                </p:column>
+
+                                <p:column headerText="Type">
+                                    <h:outputText value="#{product.tipocontactoIdtipocontacto.nombre}" />
+                                </p:column>
+                            </p:dataTable>
+                            <p:divider align="left">
+                                <span class="ui-tag">New contact</span>
+                            </p:divider>
+                            <p:outputPanel>
+                                <div class="field">
+                                    <p:outputLabel for="nameContact">Name</p:outputLabel>
+                                    <p:inputText id="nameContact" value="#{pacienteCtrl.selectedContacto.nombre}" required="true" />
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="locationContact">Phone</p:outputLabel>
+                                    <p:inputTextarea id="locationContact" value="#{pacienteCtrl.selectedContacto.telefono}" required="true"/>
+                                </div>
+                                <div class="field">
+                                    <p:outputLabel for="typeContact">Type</p:outputLabel>
+                                    <p:selectOneMenu id="typeContact" converter="omnifaces.SelectItemsConverter" required="true"
+                                                     value="#{pacienteCtrl.selectedContacto.tipocontactoIdtipocontacto}" >
+                                        <f:selectItem  itemLabel = "select" value="#{null}" /> 
+                                        <f:selectItems value="#{pacienteCtrl.tipoContactos}"
+                                                       var="obj"
+                                                       itemValue="#{obj}" itemLabel="#{obj.nombre}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </p:outputPanel>
+                        </p:panelGrid>
+
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Save" icon="pi pi-check" actionListener="#{pacienteCtrl.saveContact}"
+                                         update="manage-contacts" process="manage-contacts @this" />
+                        <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageContactDialog').hide()"
+                                         class="ui-button-secondary" type="button" />
+                    </f:facet>
+                </p:dialog>
+
+                <p:confirmDialog widgetVar="deleteProductDialog" showEffect="fade" width="300"
+                                 message="Delete the pacient?" header="Confirm" severity="warn">
+                    <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{pacienteCtrl.deleteProduct}" update=":form"
+                                     process="@this" oncomplete="PF('deleteProductDialog').hide()" />
+                    <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                     onclick="PF('deleteProductDialog').hide()" />
+                </p:confirmDialog>
+
+                <p:confirmDialog global="true" showEffect="fade" width="300">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                                     icon="pi pi-times" />
+                </p:confirmDialog>
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>

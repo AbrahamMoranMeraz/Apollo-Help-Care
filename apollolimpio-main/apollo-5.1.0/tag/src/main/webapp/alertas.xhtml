@@ -1,0 +1,133 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Alerts</ui:define>
+
+    <ui:define name="viewname">
+        <li>Pages</li> 
+        <li>/</li>
+        <li><p:link outcome="/alertas">Alerts</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="card crud-demo">
+            <h:form id="form">
+                <p:growl id="messages" showDetail="true" />
+
+                <p:dataTable id="dt-products" widgetVar="dtProducts" var="product" value="#{alertasCtrl.alertas}"
+                             reflow="true" styleClass="products-table" 
+                             rowKey="#{product.idalerta}" paginator="true" rows="10" rowSelectMode="add" paginatorPosition="bottom">
+                    <f:facet name="header">
+                        <div class="products-table-header">
+                            <span style="font-weight: bold">ALERTS</span> <span
+                                class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i> <p:inputText
+                                    id="globalFilter" onkeyup="PF('dtProducts').filter()" placeholder="Search" />
+                            </span>
+
+                        </div>
+                    </f:facet>
+
+                    <p:column headerText="Pacient" sortBy="#{product.pacienteIdpaciente.nombre}" filterBy="#{product.pacienteIdpaciente.nombre}">
+                        <h:outputText value="#{product.pacienteIdpaciente.nombre}" />
+                    </p:column>
+                    <p:column headerText="Date" sortBy="#{product.fecha}" filterBy="#{product.fecha}">
+                        <h:outputText value="#{product.fecha}" />
+                    </p:column>
+                    <p:column headerText="Type" sortBy="#{product.tipoalertaIdtipoalerta.nombre}" filterBy="#{product.tipoalertaIdtipoalerta.nombre}">
+                        <h:outputText value="#{product.tipoalertaIdtipoalerta.nombre}" />
+                    </p:column>
+                    <p:column headerText="Status" sortBy="#{product.estatus}" filterBy="#{product.estatus}">
+                        <h:outputText value="#{product.estatus}" />
+                    </p:column>
+
+                    <p:column exportable="false">
+                        <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-product-content"
+                                         oncomplete="PF('manageProductDialog').show()" actionListener="#{alertasCtrl.onAlerta(product)}"
+                                         styleClass="edit-button rounded-button " process="@this">
+                            <f:setPropertyActionListener value="#{product}" target="#{alertasCtrl.selectedAlerta}" />
+                            <p:resetInput target=":dialogs:manage-product-content" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="dialogs">
+                <p:dialog header="Pacient Details" showEffect="fade" modal="true" widgetVar="manageProductDialog"  height="400px"
+                          responsive="true">
+                    <p:outputPanel id="manage-product-content" class="ui-fluid">
+                        <div class="p-d-flex">
+                            <div class="p-mr-2 p-order-3 p-order-md-2">
+                                <p:outputPanel >
+                                    <h5>Alert</h5>
+                                    <div class="col-12 md:col-4">
+                                        <p:staticMessage severity="info" summary="#{alertasCtrl.selectedAlerta.tipoalertaIdtipoalerta.nombre}" detail="#{alertasCtrl.selectedAlerta.fecha}" style="width: 100%"/>
+                                    </div>
+                                    <p:commandButton value="Open" styleClass="ui-button-success" style="width:150px; margin:auto; margin-top: 10px;" rendered="#{alertasCtrl.selectedAlerta.estatus eq 'Open'}"/>
+                                    <p:commandButton value="Aware" styleClass="ui-button-info" style="width:150px; margin:auto; margin-top: 10px;" rendered="#{alertasCtrl.selectedAlerta.estatus eq 'Aware'}"/>
+                                    <p:commandButton value="Close" styleClass="ui-button-danger" style="width:150px; margin:auto; margin-top: 10px;" rendered="#{alertasCtrl.selectedAlerta.estatus eq 'Close'}"/>
+                                </p:outputPanel>
+                            </div>
+                            <div class="p-mr-2 p-order-3 p-order-md-2">
+                                <p:divider layout="vertical" />
+                            </div>
+                            <div class="p-mr-2 p-order-3 p-order-md-2">
+                                <p:outputPanel >
+                                    <div class="p-d-flex p-flex-wrap">
+                                        <div class="p-mr-2 p-mb-2">
+                                            <h5>Pacient</h5>
+                                            <div class="p-d-flex p-flex-wrap">
+                                                <div class="p-mr-2 p-mb-2"><p:tag styleClass="p-mr-2" value="Name"></p:tag></div>  
+                                                <div class="p-mr-2 p-mb-2"><h:outputText value="#{alertasCtrl.selectedAlerta.pacienteIdpaciente.nombre}"/></div>
+
+                                                <div class="p-mr-2 p-mb-2"><p:tag styleClass="p-mr-2" value="Phone"></p:tag></div> 
+                                                <div class="p-mr-2 p-mb-2"><h:outputText value="#{alertasCtrl.selectedAlerta.pacienteIdpaciente.telefono}"/></div> 
+
+                                                <div class="p-mr-2 p-mb-2"><p:tag styleClass="p-mr-2" value="Location"></p:tag></div> 
+                                                <div class="p-mr-2 p-mb-2"><h:outputText value="#{alertasCtrl.selectedAlerta.pacienteIdpaciente.ubicacion}"/></div> 
+
+                                                <div class="p-mr-2 p-mb-2"><p:tag styleClass="p-mr-2" value="Blood type"></p:tag></div> 
+                                                <div class="p-mr-2 p-mb-2"><h:outputText value="#{alertasCtrl.selectedAlerta.pacienteIdpaciente.tiposangre}"/></div> 
+
+                                                <div class="p-mr-2 p-mb-2"><p:tag styleClass="p-mr-2" value="Allergies"></p:tag></div> 
+                                                <div class="p-mr-2 p-mb-2"><h:outputText value="#{alertasCtrl.selectedAlerta.pacienteIdpaciente.alergias}"/></div> 
+
+                                                <div class="p-mr-2 p-mb-2"><p:tag styleClass="p-mr-2" value="Height"></p:tag></div> 
+                                                <div class="p-mr-2 p-mb-2"><h:outputText value="#{alertasCtrl.selectedAlerta.pacienteIdpaciente.altura}"/></div> 
+
+                                                <div class="p-mr-2 p-mb-2"><p:tag styleClass="p-mr-2" value="Weight"></p:tag></div> 
+                                                <div class="p-mr-2 p-mb-2"><h:outputText value="#{alertasCtrl.selectedAlerta.pacienteIdpaciente.peso}"/></div> 
+
+                                            </div>
+                                        </div>
+                                        <div class="p-mr-2 p-mb-2">
+                                            <p:graphicImage name="images/avatar1.png" library="apollo-layout" styleClass="product-image" />
+                                        </div>
+                                    </div>
+                                </p:outputPanel>
+                            </div>
+                        </div>
+                        <p:divider align="center">
+                            <span class="ui-tag">Location</span>
+                        </p:divider>
+                        <p:gmap center="#{not empty alertasCtrl.coordenadas ? alertasCtrl.coordenadas:'19.4978,-99.1269'}" zoom="13" type="HYBRID" style="width:100%;height:450px"
+                                model="#{alertasCtrl.emptyModel}"/>
+
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <p:commandButton value="Close" icon="pi pi-times" onclick="PF('manageProductDialog').hide()"
+                                         class="ui-button-secondary" type="button" />
+                    </f:facet>
+                </p:dialog>
+
+            </h:form>
+            <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyALpv1qaoc9uigr2yK2cSzAEpF7DLBLF14"></script>
+
+        </div>
+    </ui:define>
+
+</ui:composition>

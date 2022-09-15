@@ -1,0 +1,24 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pa="http://primefaces.org/apollo">
+
+    <div class="layout-menu-container">
+        <div class="menu-scroll-content">
+            <div class="layout-menu-title">MENU</div>
+            <h:form id="menuform">
+                <pa:menu widgetVar="ApolloMenuWidget">
+                    <p:menuitem id="om_dashboard" value="Dashboard" icon="pi pi-fw pi-home" outcome="dashboard" />
+                    <p:menuitem id="om_list" value="Pacients" icon="pi pi-fw pi-user"  outcome="paciente"/>
+                    <p:menuitem id="om_table" value="Alerts" icon="pi pi-fw pi-bell" outcome="alertas" />
+                    <p:menuitem id="om_crud" value="Medical history" icon="pi pi-fw pi-list" outcome="historialMedico" />
+                </pa:menu>
+            </h:form>
+        </div>
+    </div>
+
+
+</ui:composition>

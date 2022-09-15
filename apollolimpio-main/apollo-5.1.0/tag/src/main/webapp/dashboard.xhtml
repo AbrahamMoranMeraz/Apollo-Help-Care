@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Dashboard</ui:define>
+
+    <ui:define name="viewname">
+        <li>Pages</li> 
+        <li>/</li>
+        <li><p:link outcome="/dashboard">Dashboard</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <script>
+            function someWebsocketListener(message, channel, event) {
+                console.log(message);
+                wc(([{}]));
+            }
+        </script>
+        <h:form id="form" >
+            <p:growl id="messages" showDetail="true" />
+            <f:websocket channel="channelName" onmessage="someWebsocketListener"  />
+            <p:remoteCommand name="wc" action="#{alertaCtrl.webSocket()}"/>
+            <div class="p-grid">
+                <div class="p-col-12">
+                    <div class="card">
+                        <p:dataTable id="dt-products" widgetVar="dtProducts" var="product" value="#{alertaCtrl.alertas}"
+                                     reflow="true" styleClass="products-table" 
+                                     rowKey="#{product.id}" paginator="true" rows="10" paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <div class="products-table-header">
+                                    <p:staticMessage severity="info" summary="#{alertaCtrl.alertas.size()}" detail="HIGHT ALERT" style="width: 50%"
+                                                     rendered="#{alertaCtrl.alertas.size() eq 1}"/>
+                                    <p:staticMessage severity="info" summary="#{alertaCtrl.alertas.size()}" detail="HIGHT ALERTS" style="width: 50%"
+                                                     rendered="#{alertaCtrl.alertas.size() gt 1}"/>
+                                    <p:inputText id="globalFilter" onkeyup="PF('dtProducts').filter()" placeholder="Search" />
+                                </div>
+                            </f:facet>
+
+                            <p:column headerText="Id" sortBy="#{product.idalerta}" filterBy="#{product.idalerta}">
+                                <h:outputText value="#{product.idalerta}" />
+                            </p:column>
+                            <p:column headerText="Pacient" sortBy="#{product.pacienteIdpaciente.nombre}" filterBy="#{product.pacienteIdpaciente.nombre}">
+                                <h:outputText value="#{product.pacienteIdpaciente.nombre}" />
+                            </p:column>
+                            <p:column headerText="Image" exportable="false">
+                                <p:graphicImage name="images/avatar1.png" library="apollo-layout" styleClass="product-image" />
+                            </p:column>
+                            <p:column headerText="Type" sortBy="#{product.tipoalertaIdtipoalerta.nombre}" filterBy="#{product.tipoalertaIdtipoalerta.nombre}">
+                                <h:outputText value="#{product.tipoalertaIdtipoalerta.nombre}" />
+                            </p:column>
+                            <p:column headerText="Date" sortBy="#{product.fecha}" filterBy="#{product.fecha}">
+                                <h:outputText value="#{product.fecha}" />
+                            </p:column>
+                            <p:column headerText="Status" sortBy="#{product.estatus}"
+                                      filterBy="#{product.estatus}">
+                                <h:outputText styleClass="product-badge status-#{product.estatus.toLowerCase()}"
+                                              value="#{product.estatus}" />
+                            </p:column>
+                            <p:column exportable="false">
+                                <p:linkButton outcome="alertaDetalleHospital" value="Go" style="margin-right:20px;">
+                                    <f:param name="id" value="#{product.idalerta}"/>
+                                </p:linkButton>
+
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

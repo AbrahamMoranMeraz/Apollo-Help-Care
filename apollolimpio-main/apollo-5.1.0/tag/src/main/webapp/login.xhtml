@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>PrimeFaces Apollo</title>
+    </h:head>
+
+    <h:body styleClass="login-body">
+        <h:form id="formLogin">
+            <p:growl id="messages" showDetail="true"/>
+            <div class="body-container">
+                <div class="p-grid p-nogutter">
+                    <div class="p-col-12 p-lg-6 left-side">
+                        <p:graphicImage name="#{guestPreferences.darkMode != 'light'? 'images/logo-white.png' : 'images/logo-dark.png'}" library="apollo-layout" />
+                        <h1>Welcome</h1>
+                        <p>
+                            Sign in to start your session
+                        </p>
+                    </div>
+                    <div class="p-col-12 p-lg-6 right-side">
+                        <div class="login-wrapper">
+                            <div class="login-container">
+                                <span class="title">Login</span>
+
+                                <div class="p-grid ui-fluid">
+                                    <div class="p-col-12">
+                                        <p:inputText placeholder="Email" value="#{loginCtrl.correo}" autocomplete="off" />
+                                    </div>
+                                    <div class="p-col-12">
+                                        <p:password placeholder="Password" value="#{loginCtrl.contrasena}" autocomplete="off" feedback="false"/>
+                                    </div>
+                                    <div class="p-col-6">
+                                        <p:commandButton value="Login" actionListener="#{loginCtrl.login()}" icon="pi pi-check" />
+                                    </div>
+                                    <div class="p-col-6 password-container">
+                                        <p:commandLink onclick="PF('dlg2').show()" class="mr-4"
+                                                       value="Create account"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        <ui:include src="entidadMedica.xhtml"/>
+
+        <h:outputStylesheet name="css/primeicons.css" library="apollo-layout" />
+        <h:outputStylesheet name="css/primeflex.min.css" library="apollo-layout" />
+        <h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css" library="apollo-layout" />
+    </h:body>
+
+</html>

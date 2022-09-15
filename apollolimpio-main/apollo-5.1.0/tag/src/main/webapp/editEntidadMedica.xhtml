@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Create account</ui:define>
+
+    <ui:define name="viewname">
+        <li>Pages</li> 
+        <li>/</li>
+        <li><p:link outcome="/entidadMedica">Hospital</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="card crud-demo">
+            <h:form id="form">
+                <p:growl id="growl" sticky="true" showDetail="true"/>
+
+                <p:panel header="Edit">
+                    <h:panelGrid id="confirmation" columns="3" columnClasses="grid,grid,grid" style="width:100%;">
+                        <h:panelGrid columns="2" columnClasses="label, value" >
+                            <f:facet name="header">
+                                <h:outputText value="User "/>
+                            </f:facet>
+                            <h:outputText value="Name: "/>
+                            <p:inputText value="#{editEntMedicaCtrl.selectedUsuario.nombre}"/>
+
+                            <h:outputText value="Email: "/>
+                            <p:inputText value="#{editEntMedicaCtrl.selectedUsuario.correo}" styleClass="outputLabel"/>
+
+                            <h:outputText value="Password: "/>
+                            <p:inputText value="#{editEntMedicaCtrl.selectedUsuario.contrasena}" styleClass="outputLabel"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2" columnClasses="label, value">
+                            <f:facet name="header">
+                                <h:outputText value="Hospital "/>
+                            </f:facet>
+                            <h:outputText value="Name: "/>
+                            <p:inputText value="#{editEntMedicaCtrl.selectedEntidadMedica.nombre}" styleClass="outputLabel"/>
+
+                            <h:outputText value="Location: "/>
+                            <p:inputText value="#{editEntMedicaCtrl.selectedEntidadMedica.ubicacion}" styleClass="outputLabel"/>
+
+                            <h:outputText value="Phone: "/>
+                            <p:inputText value="#{editEntMedicaCtrl.selectedEntidadMedica.telefono}" styleClass="outputLabel"/>
+                        </h:panelGrid>
+
+                        <h:panelGrid id="panelImage" columns="1" columnClasses="label, value">
+                            <f:facet name="header">
+                                <h:outputText value="Icon "/>
+                            </f:facet>
+                            <p:graphicImage id="image" value="#{editEntMedicaCtrl.image}" style="width: 200px; height: 200px;" rendered="#{not empty editEntMedicaCtrl.selectedEntidadMedica.icono}"/>
+                            <h:outputText value="Upload the hospital icon"/>
+                            <p:fileUpload listener="#{editEntMedicaCtrl.uploadFile}" mode="advanced" dragDropSupport="false" fileLimit="1"
+                                          sizeLimit="600000" allowTypes="/(\.|\/)(gif|jpe?g|png|pdf|JPG)$/" update=":form:panelImage" />
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </p:panel>
+
+                <p:commandButton value="Submit" action="#{editEntMedicaCtrl.save()}" update="growl" process="@this" style="float:right;"/>
+
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>
